@@ -577,8 +577,29 @@ classdef SOLID < handle
             GUI.ax.qspace.XColor = [0.5, 0.5, 0.5];
             GUI.ax.qspace.YColor = [0.5, 0.5, 0.5];
             GUI.ax.qspace.ZColor = [0.5, 0.5, 0.5];
-            GUI.ax.qspace.View = qspaceView;
             
+% view -  The azimuth, az, is the horizontal rotation about the z-axis as
+% measured in degrees from the negative y-axis. Positive values indicate 
+% counterclockwise rotation of the viewpoint. el is the vertical elevation 
+% of the viewpoint in degrees. Positive values of elevation correspond to
+% moving above the object; negative values correspond to moving below the object.
+%
+% cart2sph - Azimuth angle, returned as an array. azimuth is the 
+% counterclockwise angle in the x-y plane measured in radians from the
+% positive x-axis. The value of the angle is in the range [-pi pi].
+% Elevation angle, returned as an array. elevation is the elevation angle 
+% in radians from the x-y plane.
+
+
+            [az, el, ~] = cart2sph(bvec(dwiInd, 1), bvec(dwiInd, 2), bvec(dwiInd, 3));
+            az = az./pi.*180;
+            el = el./pi.*180;
+            az = az - 90;
+            az(az < 0) = az + 360;
+            el = -el;            
+%             GUI.ax.qspace.View = qspaceView;
+            GUI.ax.qspace.View = [az, el];
+
             %%            
 
             modZclim = [GUI.data.thresholdLower, GUI.data.thresholdUpper];
@@ -603,7 +624,8 @@ classdef SOLID < handle
 
             
             bins = 0.1:0.2:modZclim(2);
-            hh = histogram(GUI.ax.modZhistogram, GUI.data.modZ(:), bins);
+            tmp = GUI.data.modZ(:, shellInds);
+            hh = histogram(GUI.ax.modZhistogram, tmp(:), bins);
             axes(GUI.ax.modZhistogram)
             axis(GUI.ax.modZhistogram, 'tight');          
             line(GUI.data.modZ(currentAXI, currentDWI).*[1,1], [1,max(hh.Values)], 'color', 'black', 'linewidth', 2);
@@ -688,7 +710,7 @@ classdef SOLID < handle
                 bval = load([fdir, filesep, fname(1:end-4), '.bval']);
             catch
                 try 
-                    [bname, bdir] = uigetfile({'*.bval'}, 'Select bval file');
+                    [bname, bdir] = uigetfile(fullfile(fdir,'*.bval'), 'Select bval file');
                     bval = load([bdir, filesep, bname]);
                 catch
                     e = errordlg('*.bval not found', 'Bval Error');
@@ -700,7 +722,7 @@ classdef SOLID < handle
                 bvec = load([fdir, filesep, fname(1:end-4), '.bvec']);
             catch
                 try 
-                    [vname, vdir] = uigetfile({'*.bval'}, 'Select bvec file');
+                    [vname, vdir] = uigetfile(fullfile(fdir,'*.bvec'), 'Select bvec file');
                     bvec = load([vdir, filesep, vname]);
                 catch
                     e = errordlg('*.bvec not found', 'Bvec Error');
