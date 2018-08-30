@@ -12,6 +12,7 @@ Matlab based GUI and commandline tools (Matlab / Python) for bulk outlier invest
 
 2.1) Commandline example for Elastix (Transformix) [2]
  > transformix -in modZ.nii -tp TransformParameters.txt -out outputDirectory
+
 Prerequisites this are to install Elastix tools to OS path and use them or any other compatible tool to perform image registration on DWIs to obtain TransformParameters file. These same transformation are simply applied to the modZ nifti.
 
 2.2) With FSL [3] in progress...
@@ -20,9 +21,9 @@ Prerequisites this are to install Elastix tools to OS path and use them or any o
 
 4) Use SOLID weights in the model estimation. This depends highly on the software you are using. For example, MDT v0.14.5 and later has the required functionality to add user defined weights [4]:
 
-  input_data = mdt.load_input_data(...
-                                   volume_weights=weights
-                                   )
+  > input_data = mdt.load_input_data(...
+                                     volume_weights=weights
+                                     )
 
 Steps from 1 to 4 are currently being included also in ExploreDTI [5].
                                  
