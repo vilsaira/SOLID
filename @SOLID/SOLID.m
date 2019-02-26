@@ -1,5 +1,45 @@
 classdef SOLID < handle
-
+% SOLID - Slicewise outlier detection for diffusion weighted MRI data.
+%
+% @SOLID class contains all COMMAND LINE utilities. 
+%
+% Allowed arguments are:
+% 'in', 'the path to DWI file'.
+% 'bval', 'the path to bval file' (optional).
+% 'bvec', 'the path to bvec file' (optional).
+% 'mask', 'the path to mask NIfTI' (optional).
+% 'maskTune', 'custom masking parameter value' (optional, default 0.5).
+% 'maskFilter', 'custom masking parameter value' (optional, default 7).
+% 'metric', 'Variance/Mean/Iod' (optional, default Variance).
+% 'thrL', 'Lower threshold value' (optional, default 3.5).
+% 'thrU', 'Upper threshold value' (optional, default 10.0).
+% 'save', 'true/false' (optional, default true).
+%
+% Examples
+% 
+% 1) You want to generate a SOLID object for custom usage. You have
+% DWI.nii.gz, DWI.bval, DWI.bvec files in the Matlab path and you want to
+% use SOLID to estimate the brain mask. Simply write
+%
+% > s = SOLID('in', 'DWI.nii.gz', 'save', false);
+%
+% and observer results in s-object. Nothing is written on the hard drive.
+%
+% 2) You want to analyze a DWI with custom mask and save results on the
+% hard drive. 
+%
+% > SOLID('in', 'DWI.nii.gz', 'mask', '/pathToMask/Mask.nii.gz');
+%
+% Results are saved on the hard drive to the same folder where DWI.nii.gz
+% file is.
+%
+%
+% Automated masking requires ExploreDTI function
+%   E_DTI_Create_Mask_From_DWI_enhanced_IND.p
+% **********************  Author: Viljami Sairanen  ***********************
+% *********************  viljami.sairanen@gmail.com  **********************
+% *************  Website: https://github.com/vilsaira/SOLID  **************
+% *********************  Last edited: 23 October 2018 *********************
     properties (Access = public)
         DWI 
         dims 
