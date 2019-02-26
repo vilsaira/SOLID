@@ -36,10 +36,12 @@ classdef SOLID < handle
 %
 % Automated masking requires ExploreDTI function
 %   E_DTI_Create_Mask_From_DWI_enhanced_IND.p
+%
 % **********************  Author: Viljami Sairanen  ***********************
 % *********************  viljami.sairanen@gmail.com  **********************
 % *************  Website: https://github.com/vilsaira/SOLID  **************
-% *********************  Last edited: 23 October 2018 *********************
+% ********************  Last edited: 26 February 2019 *********************
+
     properties (Access = public)
         DWI 
         dims 
