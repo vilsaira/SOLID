@@ -86,9 +86,10 @@ function solidGui = SOLID_GUI_updateAxesEtc(solidGui, source, event)
 
     % qSpace plot & modZ2D plot 
     modZclim = [solidGui.solid.thresholdLower, solidGui.solid.thresholdUpper];
+    
     if solidGui.data.qSpace3D_updateFlag
-        solidGui.data.qSpace3D = solidGui.SOLID_GUI_sphericalInterpolation(solidGui.solid.bvec, solidGui.solid.bval, solidGui.solid.modZ, shellInds, currentAXI);        
-
+%         solidGui.data.qSpace3D = solidGui.SOLID_GUI_sphericalInterpolation(solidGui.solid.bvec, solidGui.solid.bval, solidGui.solid.modZ, shellInds, currentAXI);        
+% 
         bins = 0.1:0.2:modZclim(2);
         tmp = solidGui.solid.modZ(:, shellInds);        
         [N, edges] = histcounts(tmp(:), bins);
@@ -97,34 +98,34 @@ function solidGui = SOLID_GUI_updateAxesEtc(solidGui, source, event)
         solidGui.lines.modZHist.BinLimits = [min(edges), max(edges)];
         solidGui.data.qSpace3D_updateFlag = false;
     end    
-    solidGui.lines.qSpaceVecs.XData = [solidGui.solid.bvec(shellInds,1); -solidGui.solid.bvec(shellInds,1)];
-    solidGui.lines.qSpaceVecs.YData = [solidGui.solid.bvec(shellInds,2); -solidGui.solid.bvec(shellInds,2)];
-    solidGui.lines.qSpaceVecs.ZData = [solidGui.solid.bvec(shellInds,3); -solidGui.solid.bvec(shellInds,3)];
-    solidGui.lines.qSpaceVecsCur.XData = [solidGui.solid.bvec(dwiInd,1); -solidGui.solid.bvec(dwiInd,1)];
-    solidGui.lines.qSpaceVecsCur.YData = [solidGui.solid.bvec(dwiInd,2); -solidGui.solid.bvec(dwiInd,2)];
-    solidGui.lines.qSpaceVecsCur.ZData = [solidGui.solid.bvec(dwiInd,3); -solidGui.solid.bvec(dwiInd,3)];
-    solidGui.lines.qSpaceVecsNext1.XData = [solidGui.solid.bvec(dwiInd2,1); -solidGui.solid.bvec(dwiInd2,1)];
-    solidGui.lines.qSpaceVecsNext1.YData = [solidGui.solid.bvec(dwiInd2,2); -solidGui.solid.bvec(dwiInd2,2)];
-    solidGui.lines.qSpaceVecsNext1.ZData = [solidGui.solid.bvec(dwiInd2,3); -solidGui.solid.bvec(dwiInd2,3)];
-    solidGui.lines.qSpaceVecsNext2.XData = [solidGui.solid.bvec(dwiInd3,1); -solidGui.solid.bvec(dwiInd3,1)];
-    solidGui.lines.qSpaceVecsNext2.YData = [solidGui.solid.bvec(dwiInd3,2); -solidGui.solid.bvec(dwiInd3,2)];
-    solidGui.lines.qSpaceVecsNext2.ZData = [solidGui.solid.bvec(dwiInd3,3); -solidGui.solid.bvec(dwiInd3,3)];
+%     solidGui.lines.qSpaceVecs.XData = [solidGui.solid.bvec(shellInds,1); -solidGui.solid.bvec(shellInds,1)];
+%     solidGui.lines.qSpaceVecs.YData = [solidGui.solid.bvec(shellInds,2); -solidGui.solid.bvec(shellInds,2)];
+%     solidGui.lines.qSpaceVecs.ZData = [solidGui.solid.bvec(shellInds,3); -solidGui.solid.bvec(shellInds,3)];
+%     solidGui.lines.qSpaceVecsCur.XData = [solidGui.solid.bvec(dwiInd,1); -solidGui.solid.bvec(dwiInd,1)];
+%     solidGui.lines.qSpaceVecsCur.YData = [solidGui.solid.bvec(dwiInd,2); -solidGui.solid.bvec(dwiInd,2)];
+%     solidGui.lines.qSpaceVecsCur.ZData = [solidGui.solid.bvec(dwiInd,3); -solidGui.solid.bvec(dwiInd,3)];
+%     solidGui.lines.qSpaceVecsNext1.XData = [solidGui.solid.bvec(dwiInd2,1); -solidGui.solid.bvec(dwiInd2,1)];
+%     solidGui.lines.qSpaceVecsNext1.YData = [solidGui.solid.bvec(dwiInd2,2); -solidGui.solid.bvec(dwiInd2,2)];
+%     solidGui.lines.qSpaceVecsNext1.ZData = [solidGui.solid.bvec(dwiInd2,3); -solidGui.solid.bvec(dwiInd2,3)];
+%     solidGui.lines.qSpaceVecsNext2.XData = [solidGui.solid.bvec(dwiInd3,1); -solidGui.solid.bvec(dwiInd3,1)];
+%     solidGui.lines.qSpaceVecsNext2.YData = [solidGui.solid.bvec(dwiInd3,2); -solidGui.solid.bvec(dwiInd3,2)];
+%     solidGui.lines.qSpaceVecsNext2.ZData = [solidGui.solid.bvec(dwiInd3,3); -solidGui.solid.bvec(dwiInd3,3)];
     
-    solidGui.lines.qSpaceSurf.XData = 0.98*solidGui.data.qSpace3D.Xi;
-    solidGui.lines.qSpaceSurf.YData = 0.98*solidGui.data.qSpace3D.Yi;
-    solidGui.lines.qSpaceSurf.ZData = 0.98*solidGui.data.qSpace3D.Zi;
-    solidGui.lines.qSpaceSurf.CData = solidGui.data.qSpace3D.Ci;
-    shading(solidGui.ax.qSpace, 'interp');
+%     solidGui.lines.qSpaceSurf.XData = 0.98*solidGui.data.qSpace3D.Xi;
+%     solidGui.lines.qSpaceSurf.YData = 0.98*solidGui.data.qSpace3D.Yi;
+%     solidGui.lines.qSpaceSurf.ZData = 0.98*solidGui.data.qSpace3D.Zi;
+%     solidGui.lines.qSpaceSurf.CData = solidGui.data.qSpace3D.Ci;
+%     shading(solidGui.ax.qSpace, 'interp');
     
-    solidGui.ax.qSpace.CLim = [solidGui.solid.thresholdLower, solidGui.solid.thresholdUpper];
-    [az, el, ~] = cart2sph(solidGui.solid.bvec(dwiInd, 1), solidGui.solid.bvec(dwiInd, 2), solidGui.solid.bvec(dwiInd, 3));
-    az = az./pi.*180;
-    el = el./pi.*180;
-    az = az - 90;
-    az(az < 0) = az + 360;
-    el = -el;
-    solidGui.ax.qSpace.View = [az, el];
-        
+%     solidGui.ax.qSpace.CLim = [solidGui.solid.thresholdLower, solidGui.solid.thresholdUpper];
+%     [az, el, ~] = cart2sph(solidGui.solid.bvec(dwiInd, 1), solidGui.solid.bvec(dwiInd, 2), solidGui.solid.bvec(dwiInd, 3));
+%     az = az./pi.*180;
+%     el = el./pi.*180;
+%     az = az - 90;
+%     az(az < 0) = az + 360;
+%     el = -el;
+%     solidGui.ax.qSpace.View = [az, el];
+
     solidGui.img.modZ2D.CData = solidGui.solid.modZ(:, shellInds);
     set(solidGui.ax.modZ2D, 'YDir', 'normal', 'CLim', modZclim);
     set(solidGui.ax.modZ2D_colorbar, 'CLim', modZclim);

@@ -146,10 +146,10 @@ function solidGui = SOLID_GUI_initialize(solidGui)
     solidGui.img.dwiBottomCenter = imagesc('Parent', solidGui.ax.dwiBottomCenter, 'CData', NaN(50,50));
     axis(solidGui.ax.dwiBottomCenter, 'off', 'tight', 'equal');
 
-    solidGui.ax.qSpace = axes('Parent', solidGui.ui);
-    solidGui.ax.qSpace.Position = [X(3) Y(3) W H];
-    solidGui.img.qSpace = imagesc('Parent', solidGui.ax.qSpace, 'CData', NaN(50,50));
-    axis(solidGui.ax.qSpace, 'square', 'tight');
+%     solidGui.ax.qSpace = axes('Parent', solidGui.ui);
+%     solidGui.ax.qSpace.Position = [X(3) Y(3) W H];
+%     solidGui.img.qSpace = imagesc('Parent', solidGui.ax.qSpace, 'CData', NaN(50,50));
+%     axis(solidGui.ax.qSpace, 'square', 'tight');
 
     solidGui.ax.modZ2D = axes('Parent', solidGui.ui);    
     solidGui.img.modZ2D  = imagesc('Parent', solidGui.ax.modZ2D, 'CData', rand(100,100));
@@ -332,27 +332,27 @@ function solidGui = SOLID_GUI_initialize(solidGui)
     solidGui.lines.modZG = plot(1, 1, 'c.', 'markersize', 20);
     hold(solidGui.ax.modZ2D, 'off');
 
-    solidGui.lines.qSpaceVecs = plot3(solidGui.ax.qSpace, 0,0,0, 'ro');
-    hold(solidGui.ax.qSpace, 'on');
-    solidGui.lines.qSpaceVecsCur = plot3(solidGui.ax.qSpace, 0,0,0, 'gx', 'markersize', 24);
-    solidGui.lines.qSpaceVecsNext1 = plot3(solidGui.ax.qSpace, 0,0,0, 'c.', 'markersize', 20);
-    solidGui.lines.qSpaceVecsNext2 = plot3(solidGui.ax.qSpace, 0,0,0, 'm.', 'markersize', 20);    
+%     solidGui.lines.qSpaceVecs = plot3(solidGui.ax.qSpace, 0,0,0, 'ro');
+%     hold(solidGui.ax.qSpace, 'on');
+%     solidGui.lines.qSpaceVecsCur = plot3(solidGui.ax.qSpace, 0,0,0, 'gx', 'markersize', 24);
+%     solidGui.lines.qSpaceVecsNext1 = plot3(solidGui.ax.qSpace, 0,0,0, 'c.', 'markersize', 20);
+%     solidGui.lines.qSpaceVecsNext2 = plot3(solidGui.ax.qSpace, 0,0,0, 'm.', 'markersize', 20);    
     
-    [X,Y,Z] = peaks(15);
-    C(:,:,1) = zeros(15); % red
-    C(:,:,2) = ones(15).*linspace(0.5,0.6,15); % green
-    C(:,:,3) = ones(15).*linspace(0,1,15); % blue
-    solidGui.lines.qSpaceSurf = surf(solidGui.ax.qSpace, X, Y, Z, C, 'EdgeColor', 'none');
+%     [X,Y,Z] = peaks(15);
+%     C(:,:,1) = zeros(15); % red
+%     C(:,:,2) = ones(15).*linspace(0.5,0.6,15); % green
+%     C(:,:,3) = ones(15).*linspace(0,1,15); % blue
+%     solidGui.lines.qSpaceSurf = surf(solidGui.ax.qSpace, X, Y, Z, C, 'EdgeColor', 'none');
     
-    hold(solidGui.ax.qSpace, 'off')
-    axis(solidGui.ax.qSpace, 'square');
-    grid(solidGui.ax.qSpace, 'on');
-    xlabel(solidGui.ax.qSpace, 'X');
-    ylabel(solidGui.ax.qSpace, 'Y');
-    zlabel(solidGui.ax.qSpace, 'Z');
-    solidGui.ax.qSpace.XColor = [0.5, 0.5, 0.5];
-    solidGui.ax.qSpace.YColor = [0.5, 0.5, 0.5];
-    solidGui.ax.qSpace.ZColor = [0.5, 0.5, 0.5];    
+%     hold(solidGui.ax.qSpace, 'off')
+%     axis(solidGui.ax.qSpace, 'square');
+%     grid(solidGui.ax.qSpace, 'on');
+%     xlabel(solidGui.ax.qSpace, 'X');
+%     ylabel(solidGui.ax.qSpace, 'Y');
+%     zlabel(solidGui.ax.qSpace, 'Z');
+%     solidGui.ax.qSpace.XColor = [0.5, 0.5, 0.5];
+%     solidGui.ax.qSpace.YColor = [0.5, 0.5, 0.5];
+%     solidGui.ax.qSpace.ZColor = [0.5, 0.5, 0.5];    
     
     axis(solidGui.ax.modZhistogram, 'tight');
     solidGui.lines.modZHist = histogram(solidGui.ax.modZhistogram,0,1);
@@ -394,5 +394,17 @@ function solidGui = SOLID_GUI_initialize(solidGui)
         'TasksToExecute', inf, ...
         'ExecutionMode', 'fixedSpacing', ...
         'TimerFcn', @solidGui.SOLID_GUI_callbackWindowTimer);
+    
+    allAxesInFigure = findall(solidGui.ui,'type','axes');
+    for i = 1:length(allAxesInFigure)
+        try
+            disableDefaultInteractivity(allAxesInFigure(i));
+        catch
+        end
+        try
+            axtoolbar(allAxesInFigure(i), 'Visible', 'off');            
+        catch
+        end
+    end
     
 end
