@@ -67,10 +67,10 @@ function solidGui = SOLID_GUI_updateAxesEtc(solidGui, source, event)
     
     solidGui.img.dwiMiddleCenter.CData = flipud(imgAXI);
     set(solidGui.ax.dwiMiddleCenter, 'Clim', solidGui.data.clim);  
-    solidGui.lines.axiCOR.XData = limitsCOR;
+    solidGui.lines.axiCOR.XData = limitsSAG; %limitsCOR
     solidGui.lines.axiCOR.YData = currentCOR.*[1,1]+0.5;
     solidGui.lines.axiSAG.XData = currentSAG.*[1,1]+0.5;
-    solidGui.lines.axiSAG.YData = limitsSAG;                        
+    solidGui.lines.axiSAG.YData = limitsCOR; %limitsSAG             
     
     solidGui.img.dwiBottomCenter.CData = flipud(imgAXI_LKM);
     set(solidGui.ax.dwiBottomCenter, 'Clim', solidGui.data.clim);             
