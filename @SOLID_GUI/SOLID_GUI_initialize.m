@@ -122,7 +122,7 @@ function solidGui = SOLID_GUI_initialize(solidGui)
     solidGui.ax.dwiMiddleCenter = axes('Parent', solidGui.ui);
     solidGui.ax.dwiMiddleCenter.Position = [X(2) Y(2) W H];
     solidGui.img.dwiMiddleCenter = imagesc('Parent', solidGui.ax.dwiMiddleCenter, 'CData', NaN(50,50));
-    axis(solidGui.ax.dwiMiddleCenter', 'tight', 'equal');
+    axis(solidGui.ax.dwiMiddleCenter, 'tight', 'equal');
     solidGui.ax.dwiMiddleCenter.XColor = [1, 1, 1];
     solidGui.ax.dwiMiddleCenter.YColor = [1, 1, 1];
     solidGui.ax.dwiMiddleCenter.Box = 'on';
