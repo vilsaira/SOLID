@@ -1,9 +1,9 @@
 # SOLID
 Slicewise OutLier Detection for diffusion weighted MRI  
 
-For details, please check the original paper [1] https://doi.org/10.1016/j.neuroimage.2018.07.003. For a short video tutorial, click the following figure: 
+For details, please check the original paper [1] https://doi.org/10.1016/j.neuroimage.2018.07.003. For a short YouTube tutorial, click the following figure: 
 
-[![Alt text](https://img.youtube.com/vi/6R4tijOW4Ts/0.jpg)](https://www.youtube.com/watch?v=6R4tijOW4Ts "Click to show SOLID tutorial on Youtube.com"). 
+![Alt text](https://img.youtube.com/vi/6R4tijOW4Ts/0.jpg)](https://www.youtube.com/watch?v=6R4tijOW4Ts "Click to show SOLID tutorial on youtube.com"). 
 
 Matlab toolbox contains of three classes (tested on R2019a):
 @SOLID - all command line functionalities. 
