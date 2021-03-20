@@ -44,6 +44,8 @@ class SOLID(object):
         self._dataMask_img = None
         self._dataBVal = None
         self._dataBVec = None
+        self._scalingMethod = "linear" # linear or sigmoid
+        self._scalingFactor = 0.2 # Scaling factor used only for sigmoid
 
         self._modZ2D = None
         self._modZ4Dfirst = None
@@ -169,19 +171,19 @@ class SOLID(object):
         nii = nib.Nifti1Image(img_eddy, modz_eddy.affine, hdr)
         nib.save(nii, f"{self._pathEDDY}_solid_modZ4D.nii.gz")
         # Convert modz to reliability weights
-        self.modz2weights(f"{self._pathEDDY}_solid_modZ4D.nii.gz", f"{self._pathEDDY}_solid_reliability_weights.nii.gz", self._lowerThreshold, self._upperThreshold, interptype=2, k=0.2) 
+        self.modz2weights(f"{self._pathEDDY}_solid_modZ4D.nii.gz", f"{self._pathEDDY}_solid_reliability_weights.nii.gz", self._lowerThreshold, self._upperThreshold, scalingMethod=self._scalingMethod, k=self._scalingFactor) 
 
-    def modz2weights(self, in_solid_modz4dnii=None, out_solid_weightsnii=None, thr_low=3.5, thr_up=6, interptype=1, k=0.2):
+    def modz2weights(self, in_solid_modz4dnii=None, out_solid_weightsnii=None, thr_low=3.5, thr_up=6, scalingMethod="linear", k=0.2):
         # interptype defines interpolation method 1 is linear and 2 is logistic (sigmoid)
         if os.path.isfile(in_solid_modz4dnii) is not None and out_solid_weightsnii is not None:
             modznii = nib.load(in_solid_modz4dnii)
             solid_weights = modznii.get_fdata()            
             solid_weights[solid_weights < thr_low] = thr_low
             solid_weights[solid_weights > thr_up] = thr_up
-            if interptype == 1:
+            if scalingMethod == "linear":
                 # Linear scaling
                 solid_weights = (solid_weights - thr_low) / (thr_up - thr_low)
-            if interptype == 2:
+            if scalingMethod == "sigmoid":
                 # Sigmoid scaling
                 solid_weights = (solid_weights - thr_low) * 2.0 / (thr_up - thr_low) - 1.0
                 solid_weights = 1 / (1 + np.exp( -solid_weights / k))
@@ -204,7 +206,9 @@ class SOLID(object):
         parser.add_argument("--PNG", help="Show modified Z-score as an image", action="store_true", default=False, dest="PNG")
         parser.add_argument("--GUI", help="Launch SOLID GUI", action="store_true", default=False, dest="GUI")
         parser.add_argument("--thrU", help="Set upper modified Z-score threshold (defaut 10.0)", action="store", dest="thrU", default=6.0, type=float)
-        parser.add_argument("--thrL", help="Set lower modified Z-score threshold (defaut 3.5)", action="store", dest="thrL", default=3.5, type=float)        
+        parser.add_argument("--thrL", help="Set lower modified Z-score threshold (defaut 3.5)", action="store", dest="thrL", default=3.5, type=float)
+        parser.add_argument("--smet", help="Set scaling method for mapping modified Z-score to reliability weights: (linear) or sigmoid.", action="store", dest="smet", default="linear", type=str)
+        parser.add_argument("--sfac", help="Set scaling factor for sigmoid scaling (defaut 0.2)", action="store", dest="sfac", default=0.2, type=float)
         args = parser.parse_args()
         
         if (args.dwi is None) and (args.GUI is None):
@@ -247,6 +251,12 @@ class SOLID(object):
 
         if args.thrU is not None:
             self._upperThreshold = args.thrU
+
+        if args.smet is not None:
+            self._scalingMethod = args.smet
+
+        if args.sfac is not None:
+            self._scalingFactor = args.sfac
 
     @property
     def _pathDWI(self):
@@ -413,6 +423,34 @@ class SOLID(object):
     @_modZ2D.setter
     def _modZ2D(self, value):
         self.__modZ2D = value
+
+    @property
+    def _scalingMethod(self):
+        return self.__scalingMethod
+
+    @_scalingMethod.setter
+    def _scalingMethod(self, value):
+        if (value != "linear") and (value != "sigmoid"):
+            sys.exit(f"Argument error, --smet, {value} is not defined. Allowed values are `linear` and `sigmoid`.")
+        self.___scalingMethod = value
+
+    @property
+    def _scalingFactor(self):
+        return self.__scalingFactor
+
+    @_scalingFactor.setter
+    def _scalingFactor(self, value):
+        self.__scalingFactor = value
+
+    @property
+    def _metric(self):
+        return self.__metric
+
+    @_metric.setter
+    def _metric(self, value):        
+        if (value != "var") and (value != "iod") and (value != "mean"):
+            sys.exit(f"Argument error, --metric, {value} is not defined. Allowed values are `mean`, `var`, and `iod`.")
+        self.__metric = value
 
 if __name__ == "__main__":
     solid = SOLID()
