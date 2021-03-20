@@ -205,7 +205,7 @@ class SOLID(object):
         parser.add_argument("--metric", help="Used metric (var/mean/iod)", type=str, dest="metric", action="store")
         parser.add_argument("--PNG", help="Show modified Z-score as an image", action="store_true", default=False, dest="PNG")
         parser.add_argument("--GUI", help="Launch SOLID GUI", action="store_true", default=False, dest="GUI")
-        parser.add_argument("--thrU", help="Set upper modified Z-score threshold (defaut 10.0)", action="store", dest="thrU", default=6.0, type=float)
+        parser.add_argument("--thrU", help="Set upper modified Z-score threshold (defaut 6.0)", action="store", dest="thrU", default=6.0, type=float)
         parser.add_argument("--thrL", help="Set lower modified Z-score threshold (defaut 3.5)", action="store", dest="thrL", default=3.5, type=float)
         parser.add_argument("--smet", help="Set scaling method for mapping modified Z-score to reliability weights: (linear) or sigmoid.", action="store", dest="smet", default="linear", type=str)
         parser.add_argument("--sfac", help="Set scaling factor for sigmoid scaling (defaut 0.2)", action="store", dest="sfac", default=0.2, type=float)

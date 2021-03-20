@@ -18,7 +18,7 @@ optional arguments:
   --metric METRIC  Used metric (var/mean/iod)  
   --PNG            Show modified Z-score as an image  
 (  --GUI            Launch SOLID GUI) legacy  
-  --thrU THRU      Set upper modified Z-score threshold (defaut 10.0)  
+  --thrU THRU      Set upper modified Z-score threshold (defaut 6.0)  
   --thrL THRL      Set lower modified Z-score threshold (defaut 3.5)  
   --smet SMET      Set scaling method for mapping modified Z-score to reliability weights: (linear) or sigmoid  
   --sfac SFAC      Set scaling factor for sigmoid scaling (defaut 0.2)  
