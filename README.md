@@ -46,7 +46,9 @@ Extract these to your Matlab path or if you are using ExploreDTI to PathToExplor
 
 ----- Notes and other tools -----
 
-Modified Z-score maps (modZ4D) holds the outlier information in the original DWI space. This information can easily be summarized into 2D image where y-axis is the number of slices and x-axis is the number of volumes. However, after the motion correction transformation is applied to the 4D volume, these values much be considered as voxelwise information.
+Modified Z-score maps (modZ4D) holds the outlier information in the original DWI space. This information can easily be summarized into 2D image where y-axis is the number of slices and x-axis is the number of volumes. However, after the motion correction transformation is applied to the 4D volume, these values much be considered as voxelwise information. Mapping of the modified Z-scores to weights can be achieved with various methods, of which linear and sigmoid are shown in the figure below:
+
+![alt text](https://github.com/vilsaira/SOLID/blob/master/SOLID_modz2weight_mapping.png?raw=true)
 
 Modified Z-score maps can be transformed using any registration algorithm using the transformation matrice obtained from the DWI motion and eddy correction steps. For example, Elastix (Transformix) [4] tool could be used like so  
  > transformix -in modZ4D.nii -tp TransformParameters.txt -out outputDirectory  
@@ -58,7 +60,7 @@ How to use these reliability weights depends on the modelling software e.g. how 
 In microstructural modelling with MDT v0.14.5 [5] the reliability weights can be specified by the user as so:  
   > input_data = mdt.load_input_data(...volume_weights=weights)  
 
-Notably, many tools do not support robust modelling and these weights might not be easily added to pipelines usings such tools.  
+Many tools do not support robust modelling and these weights might not be easily added to pipelines usings such tools.  
 
 ----- References  -----
 [1] Sairanen, V., A. Leemans, and C. M. W. Tax. "Fast and accurate Slicewise OutLIer Detection (SOLID) with informed model estimation for diffusion MRI data." NeuroImage 181 (2018): 331-346.  
