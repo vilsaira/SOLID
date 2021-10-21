@@ -432,7 +432,7 @@ class SOLID(object):
     def _scalingMethod(self, value):
         if (value != "linear") and (value != "sigmoid"):
             sys.exit(f"Argument error, --smet, {value} is not defined. Allowed values are `linear` and `sigmoid`.")
-        self.___scalingMethod = value
+        self.__scalingMethod = value
 
     @property
     def _scalingFactor(self):
