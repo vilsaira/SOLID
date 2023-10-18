@@ -19,7 +19,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from shutil import which
 import numpy.matlib as matlib
 
-DESCRIPTION =   "Slicewise outlier detection (SOLID) for diffusion weighted MRI data. Viljami Sairanen 2018."
+DESCRIPTION =   "Slicewise outlier detection (SOLID) for diffusion weighted MRI data. Viljami Sairanen 2018. Updated 2023 for multi-slice data."
 
 class SOLID(object):
 
@@ -49,6 +49,11 @@ class SOLID(object):
 
         self._modZ2D = None
         self._modZ4Dfirst = None
+
+        self._pathSlspec = None
+        # slspec file should be similar to fsl eddy slspec file e.g. N slices and multi-slice factor m produces a file with N rows and m columns.
+        self._slspec = None
+        self._slspecUse = False
 
         self.argParser()
     
@@ -123,12 +128,32 @@ class SOLID(object):
             tmp = np.argwhere(np.isnan(shell))
             dims = shell.shape
             shell = shell.reshape((dims[0]*dims[1], dims[2], dims[3]))
-            if self._metric == "var":
-                y = np.nanvar(shell, axis=0)
-            if self._metric == "mean":
-                y = np.nanmean(shell, axis=0)
-            if self._metric =="iod":
-                y = np.nanvar(shell, axis=0) / np.nanmean(shell, axis=0)
+
+            y = np.zeros((dims[2], dims[3]))
+            if self._slspecUse:
+                for slice_indices in self._slspec:
+                    slic = shell[:, slice_indices, :]
+                    slic = slic.reshape(-1, dims[3])
+
+                    if self._metric == "var":
+                        y[slice_indices,:] = np.nanvar(slic, axis=0)
+                    if self._metric == "mean":
+                        y[slice_indices,:] = np.nanmean(slic, axis=0)
+                    if self._metric =="iod":
+                        y[slice_indices,:] = np.nanvar(slic, axis=0) / np.nanmean(slic, axis=0)
+            else:
+                if self._metric == "var":
+                    y = np.nanvar(shell, axis=0)
+                if self._metric == "mean":
+                    y = np.nanmean(shell, axis=0)
+                if self._metric =="iod":
+                    y = np.nanvar(shell, axis=0) / np.nanmean(shell, axis=0)
+
+            # For multi-slice acquisitions, an average of the used metric is used for the rest of the modZ calculations
+            # if self._slspecUse:
+            #     for slice_indices in self._slspec:
+            #         y[slice_indices, :] = np.nanmean(y[slice_indices], axis=0)
+
             tmp = matlib.repmat(np.nanmedian(y, axis=1), dims[3], 1).T
             MAD = 1.4826 * np.nanmedian( np.abs(y - tmp), axis=1)
             modZ = np.abs(y-tmp) / matlib.repmat(MAD,dims[3],1).T
@@ -146,6 +171,8 @@ class SOLID(object):
         if self._useMask:
             self._dataMask_hdr = nib.load(self._pathMask)
             self._dataMask_img = self._dataMask_hdr.get_fdata()
+        if self._slspecUse:
+            self._slspec = np.loadtxt(self._pathSlspec).astype(int)
 
     def applyEDDY(self):
         if os.path.exists(f"{self._pathEDDY}.eddy_command_txt"):
@@ -174,17 +201,14 @@ class SOLID(object):
         self.modz2weights(f"{self._pathEDDY}_solid_modZ4D.nii.gz", f"{self._pathEDDY}_solid_reliability_weights.nii.gz", self._lowerThreshold, self._upperThreshold, scalingMethod=self._scalingMethod, k=self._scalingFactor) 
 
     def modz2weights(self, in_solid_modz4dnii=None, out_solid_weightsnii=None, thr_low=3.5, thr_up=6, scalingMethod="linear", k=0.2):
-        # interptype defines interpolation method 1 is linear and 2 is logistic (sigmoid)
         if os.path.isfile(in_solid_modz4dnii) is not None and out_solid_weightsnii is not None:
             modznii = nib.load(in_solid_modz4dnii)
             solid_weights = modznii.get_fdata()            
             solid_weights[solid_weights < thr_low] = thr_low
             solid_weights[solid_weights > thr_up] = thr_up
             if scalingMethod == "linear":
-                # Linear scaling
                 solid_weights = (solid_weights - thr_low) / (thr_up - thr_low)
             if scalingMethod == "sigmoid":
-                # Sigmoid scaling
                 solid_weights = (solid_weights - thr_low) * 2.0 / (thr_up - thr_low) - 1.0
                 solid_weights = 1 / (1 + np.exp( -solid_weights / k))
             solid_weights = 1 - solid_weights
@@ -209,6 +233,7 @@ class SOLID(object):
         parser.add_argument("--thrL", help="Set lower modified Z-score threshold (defaut 3.5)", action="store", dest="thrL", default=3.5, type=float)
         parser.add_argument("--smet", help="Set scaling method for mapping modified Z-score to reliability weights: (linear) or sigmoid.", action="store", dest="smet", default="linear", type=str)
         parser.add_argument("--sfac", help="Set scaling factor for sigmoid scaling (defaut 0.2)", action="store", dest="sfac", default=0.2, type=float)
+        parser.add_argument("--slspec", help="path to slspec file", type=str, dest="slspec", action="store")
         args = parser.parse_args()
         
         if (args.dwi is None) and (args.GUI is None):
@@ -257,6 +282,9 @@ class SOLID(object):
 
         if args.sfac is not None:
             self._scalingFactor = args.sfac
+
+        if args.slspec is not None:
+            self._pathSlspec = os.path.realpath(args.slspec)
 
     @property
     def _pathDWI(self):
@@ -451,6 +479,33 @@ class SOLID(object):
         if (value != "var") and (value != "iod") and (value != "mean"):
             sys.exit(f"Argument error, --metric, {value} is not defined. Allowed values are `mean`, `var`, and `iod`.")
         self.__metric = value
+
+    @property
+    def _pathSlspec(self):
+        return self.__pathSlspec
+
+    @_pathSlspec.setter
+    def _pathSlspec(self, value):
+        if (value is not None) and not (os.path.isfile(value)):
+            sys.exit("Argument error, --slspec, cannot locate slspec file")
+        self.__pathSlspec = value
+        self.__slspecUse = True
+
+    @property
+    def _slspec(self):
+        return self.__slspec
+
+    @_slspec.setter
+    def _slspec(self, value):
+        self.__slspec = value
+
+    @property
+    def _slspecUse(self):
+        return self.__slspecUse
+
+    @_slspecUse.setter
+    def _slspecUse(self, value):
+        self.__slspecUse = value
 
 if __name__ == "__main__":
     solid = SOLID()
